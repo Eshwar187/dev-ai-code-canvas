@@ -1,11 +1,12 @@
-
 import React, { useState } from 'react';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/Navbar';
 import CodeEditor from '@/components/CodeEditor';
 import PromptInput from '@/components/PromptInput';
 import ResultsDashboard from '@/components/ResultsDashboard';
-import { Button } from '@/components/ui/button';
+import AnimatedButton from '@/components/AnimatedButton';
+import TypewriterText from '@/components/TypewriterText';
+import FloatingElements from '@/components/FloatingElements';
 import { Card } from '@/components/ui/card';
 import { Sparkles, Code2, Brain, Zap } from 'lucide-react';
 
@@ -57,12 +58,10 @@ const Index = () => {
   };
 
   const handleLogin = () => {
-    // Clerk authentication would be integrated here
     console.log('Login clicked');
   };
 
   const handleSignup = () => {
-    // Clerk authentication would be integrated here
     console.log('Signup clicked');
   };
 
@@ -78,7 +77,9 @@ const Index = () => {
 
   return (
     <ThemeProvider defaultTheme="dark">
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background relative overflow-hidden">
+        <FloatingElements />
+        
         <Navbar
           isAuthenticated={isAuthenticated}
           onLogin={handleLogin}
@@ -86,35 +87,35 @@ const Index = () => {
           onLogout={handleLogout}
         />
         
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-8 relative z-10">
           {!showResults ? (
             <div className="space-y-8">
               {/* Hero Section */}
-              <div className="text-center space-y-6 mb-12">
-                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-electric-blue/20 to-emerald-green/20 px-4 py-2 rounded-full border border-border/50">
-                  <Sparkles className="h-4 w-4 electric-blue" />
+              <div className="text-center space-y-6 mb-12 animate-fade-in">
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-electric-blue/20 to-emerald-green/20 px-4 py-2 rounded-full border border-border/50 animate-scale-in">
+                  <Sparkles className="h-4 w-4 electric-blue animate-pulse" />
                   <span className="text-sm font-medium">AI-Powered Code Analysis</span>
                 </div>
                 
-                <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-electric-blue via-emerald-green to-electric-blue bg-clip-text text-transparent">
-                  Analyze. Improve. Deploy.
+                <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-electric-blue via-emerald-green to-electric-blue bg-clip-text text-transparent animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                  <TypewriterText text="Analyze. Improve. Deploy." speed={100} delay={500} />
                 </h1>
                 
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '0.4s' }}>
                   Get instant security audits, performance optimizations, and code improvements 
                   powered by advanced AI. Write better code, faster.
                 </p>
 
-                <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
-                  <div className="flex items-center space-x-2">
+                <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                  <div className="flex items-center space-x-2 hover:text-electric-blue transition-colors duration-200">
                     <Code2 className="h-4 w-4 electric-blue" />
                     <span>Multi-language support</span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 hover:text-emerald-green transition-colors duration-200">
                     <Brain className="h-4 w-4 emerald-green" />
                     <span>AI-powered analysis</span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 hover:text-warning-amber transition-colors duration-200">
                     <Zap className="h-4 w-4 warning-amber" />
                     <span>Instant results</span>
                   </div>
@@ -124,17 +125,17 @@ const Index = () => {
               {/* Dual Input Interface */}
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Code Editor */}
-                <div className="space-y-4">
+                <div className="space-y-4 animate-slide-in-left">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold text-foreground">Your Code</h2>
-                    <Button
+                    <AnimatedButton
                       variant="outline"
                       size="sm"
                       onClick={loadExample}
-                      className="hover:bg-accent/50 smooth-transition"
+                      className="hover:bg-accent/50"
                     >
                       Load Example
-                    </Button>
+                    </AnimatedButton>
                   </div>
                   <CodeEditor
                     value={code}
@@ -145,7 +146,7 @@ const Index = () => {
                 </div>
 
                 {/* Prompt Input */}
-                <div className="space-y-4">
+                <div className="space-y-4 animate-slide-in-right">
                   <h2 className="text-xl font-semibold text-foreground">Analysis Request</h2>
                   <PromptInput
                     value={prompt}
@@ -158,53 +159,50 @@ const Index = () => {
 
               {/* Features Cards */}
               <div className="grid md:grid-cols-3 gap-6 mt-16">
-                <Card className="p-6 border-border/50 hover:border-electric-blue/50 smooth-transition group">
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 bg-electric-blue/20 rounded-lg flex items-center justify-center group-hover:bg-electric-blue/30 smooth-transition">
-                      <Code2 className="h-6 w-6 electric-blue" />
+                {[
+                  {
+                    icon: <Code2 className="h-6 w-6 electric-blue" />,
+                    title: "Smart Analysis",
+                    description: "Advanced AI understands context and provides meaningful insights for your code.",
+                    color: "electric-blue"
+                  },
+                  {
+                    icon: <Brain className="h-6 w-6 emerald-green" />,
+                    title: "Security First",
+                    description: "Comprehensive security analysis to identify vulnerabilities and suggest fixes.",
+                    color: "emerald-green"
+                  },
+                  {
+                    icon: <Zap className="h-6 w-6 warning-amber" />,
+                    title: "Performance Boost",
+                    description: "Optimize algorithms and improve code efficiency with AI-powered suggestions.",
+                    color: "warning-amber"
+                  }
+                ].map((feature, index) => (
+                  <Card key={feature.title} className={`p-6 border-border/50 hover:border-${feature.color}/50 transition-all duration-300 group animate-fade-in hover:transform hover:scale-105`} style={{ animationDelay: `${0.8 + index * 0.1}s` }}>
+                    <div className="space-y-4">
+                      <div className={`w-12 h-12 bg-${feature.color}/20 rounded-lg flex items-center justify-center group-hover:bg-${feature.color}/30 transition-all duration-300 group-hover:rotate-6`}>
+                        {feature.icon}
+                      </div>
+                      <h3 className="text-lg font-semibold">{feature.title}</h3>
+                      <p className="text-muted-foreground">
+                        {feature.description}
+                      </p>
                     </div>
-                    <h3 className="text-lg font-semibold">Smart Analysis</h3>
-                    <p className="text-muted-foreground">
-                      Advanced AI understands context and provides meaningful insights for your code.
-                    </p>
-                  </div>
-                </Card>
-
-                <Card className="p-6 border-border/50 hover:border-emerald-green/50 smooth-transition group">
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 bg-emerald-green/20 rounded-lg flex items-center justify-center group-hover:bg-emerald-green/30 smooth-transition">
-                      <Brain className="h-6 w-6 emerald-green" />
-                    </div>
-                    <h3 className="text-lg font-semibold">Security First</h3>
-                    <p className="text-muted-foreground">
-                      Comprehensive security analysis to identify vulnerabilities and suggest fixes.
-                    </p>
-                  </div>
-                </Card>
-
-                <Card className="p-6 border-border/50 hover:border-warning-amber/50 smooth-transition group">
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:bg-orange-500/30 smooth-transition">
-                      <Zap className="h-6 w-6 warning-amber" />
-                    </div>
-                    <h3 className="text-lg font-semibold">Performance Boost</h3>
-                    <p className="text-muted-foreground">
-                      Optimize algorithms and improve code efficiency with AI-powered suggestions.
-                    </p>
-                  </div>
-                </Card>
+                  </Card>
+                ))}
               </div>
             </div>
           ) : (
             <div className="space-y-6">
               {/* Back Button */}
-              <Button
+              <AnimatedButton
                 variant="ghost"
                 onClick={() => setShowResults(false)}
-                className="mb-4 hover:bg-accent/50 smooth-transition"
+                className="mb-4 hover:bg-accent/50"
               >
                 ← Back to Editor
-              </Button>
+              </AnimatedButton>
 
               {/* Results */}
               <ResultsDashboard

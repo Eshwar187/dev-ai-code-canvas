@@ -1,11 +1,11 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight, Shield, Zap, Target, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import CodeEditor from './CodeEditor';
+import AnimatedCounter from './AnimatedCounter';
 
 interface TestCase {
   id: string;
@@ -35,6 +35,13 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
   isVisible
 }) => {
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set(['security']));
+  const [animateStats, setAnimateStats] = useState(false);
+
+  useEffect(() => {
+    if (isVisible) {
+      setTimeout(() => setAnimateStats(true), 500);
+    }
+  }, [isVisible]);
 
   const toggleCategory = (categoryId: string) => {
     const newOpenCategories = new Set(openCategories);
@@ -144,31 +151,31 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="slide-in-up">
+    <div className="animate-slide-in-up">
       <Card className="border-border/50 shadow-xl">
         <Tabs defaultValue="corrected" className="w-full">
           <div className="border-b border-border/50 bg-gradient-to-r from-electric-blue/5 to-emerald-green/5">
             <TabsList className="grid w-full grid-cols-2 bg-transparent">
               <TabsTrigger 
                 value="corrected"
-                className="data-[state=active]:bg-electric-blue/20 data-[state=active]:text-electric-blue smooth-transition"
+                className="data-[state=active]:bg-electric-blue/20 data-[state=active]:text-electric-blue transition-all duration-300 hover:bg-electric-blue/10"
               >
                 Corrected Code
               </TabsTrigger>
               <TabsTrigger 
                 value="tests"
-                className="data-[state=active]:bg-emerald-green/20 data-[state=active]:text-emerald-green smooth-transition"
+                className="data-[state=active]:bg-emerald-green/20 data-[state=active]:text-emerald-green transition-all duration-300 hover:bg-emerald-green/10"
               >
                 Test Cases
               </TabsTrigger>
             </TabsList>
           </div>
 
-          <TabsContent value="corrected" className="mt-0 p-6">
+          <TabsContent value="corrected" className="mt-0 p-6 animate-fade-in">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-foreground">Improved Code</h3>
-                <Badge className="bg-emerald-green/20 text-emerald-green">
+                <Badge className="bg-emerald-green/20 text-emerald-green animate-pulse">
                   AI Enhanced
                 </Badge>
               </div>
@@ -181,34 +188,34 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="tests" className="mt-0 p-6">
+          <TabsContent value="tests" className="mt-0 p-6 animate-fade-in">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-foreground">Analysis Results</h3>
                 <div className="flex items-center space-x-2">
                   <Badge className="bg-emerald-green/20 text-emerald-green">
-                    6 Passed
+                    {animateStats ? <AnimatedCounter end={6} /> : '6'} Passed
                   </Badge>
                   <Badge className="bg-yellow-500/20 text-yellow-500">
-                    2 Warnings
+                    {animateStats ? <AnimatedCounter end={2} /> : '2'} Warnings
                   </Badge>
                   <Badge className="bg-red-500/20 text-red-500">
-                    1 Failed
+                    {animateStats ? <AnimatedCounter end={1} /> : '1'} Failed
                   </Badge>
                 </div>
               </div>
 
               <div className="space-y-4">
-                {testCategories.map((category) => (
-                  <Card key={category.id} className="border-border/50">
+                {testCategories.map((category, index) => (
+                  <Card key={category.id} className="border-border/50 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                     <Collapsible
                       open={openCategories.has(category.id)}
                       onOpenChange={() => toggleCategory(category.id)}
                     >
                       <CollapsibleTrigger asChild>
-                        <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-accent/30 smooth-transition">
+                        <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-accent/30 transition-all duration-200 group">
                           <div className="flex items-center space-x-3">
-                            <div className={category.color}>
+                            <div className={`${category.color} transition-transform duration-200 group-hover:scale-110`}>
                               {category.icon}
                             </div>
                             <h4 className="font-medium text-foreground">{category.title}</h4>
@@ -216,33 +223,37 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
                               {category.testCases.length} tests
                             </Badge>
                           </div>
-                          {openCategories.has(category.id) ? (
-                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                          )}
+                          <div className="transition-transform duration-200">
+                            {openCategories.has(category.id) ? (
+                              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </div>
                         </div>
                       </CollapsibleTrigger>
                       
-                      <CollapsibleContent>
+                      <CollapsibleContent className="animate-accordion-down">
                         <div className="px-4 pb-4 space-y-3 border-t border-border/50">
-                          {category.testCases.map((testCase) => (
-                            <div key={testCase.id} className="p-3 rounded-lg bg-muted/30 border border-border/50">
+                          {category.testCases.map((testCase, testIndex) => (
+                            <div key={testCase.id} className="p-3 rounded-lg bg-muted/30 border border-border/50 hover:border-accent/50 transition-all duration-200 animate-fade-in" style={{ animationDelay: `${testIndex * 0.05}s` }}>
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                   <div className="flex items-center space-x-2 mb-1">
-                                    {getStatusIcon(testCase.status)}
+                                    <div className="transition-transform duration-200 hover:scale-110">
+                                      {getStatusIcon(testCase.status)}
+                                    </div>
                                     <h5 className="font-medium text-sm text-foreground">
                                       {testCase.title}
                                     </h5>
-                                    <Badge className={getStatusColor(testCase.status)}>
+                                    <Badge className={`${getStatusColor(testCase.status)} transition-colors duration-200`}>
                                       {testCase.status}
                                     </Badge>
                                   </div>
                                   <p className="text-sm text-muted-foreground mb-2">
                                     {testCase.description}
                                   </p>
-                                  <p className="text-xs text-foreground bg-background/50 p-2 rounded">
+                                  <p className="text-xs text-foreground bg-background/50 p-2 rounded transition-colors duration-200 hover:bg-background/70">
                                     {testCase.details}
                                   </p>
                                 </div>

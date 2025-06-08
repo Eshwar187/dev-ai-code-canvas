@@ -21,6 +21,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [lineNumbers, setLineNumbers] = useState<number[]>([1]);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     const lines = value.split('\n').length;
@@ -39,6 +40,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     onChange('');
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setIsTyping(true);
+    onChange(e.target.value);
+    
+    setTimeout(() => setIsTyping(false), 500);
+  };
+
   const syntaxHighlight = (code: string) => {
     return code
       .replace(/\b(function|const|let|var|if|else|for|while|return|class|extends|import|export|from|default)\b/g, 
@@ -54,16 +62,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   return (
-    <Card className="relative overflow-hidden code-bg border-border/50 shadow-lg">
+    <Card className={`relative overflow-hidden code-bg border-border/50 shadow-lg transition-all duration-300 ${isTyping ? 'ring-2 ring-electric-blue/50' : ''}`}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-card border-b border-border/50">
         <div className="flex items-center space-x-2">
           <div className="flex space-x-2">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
           <span className="text-sm text-muted-foreground ml-4">{language}</span>
+          {isTyping && (
+            <div className="flex items-center space-x-1 ml-2">
+              <div className="w-1 h-1 bg-electric-blue rounded-full animate-bounce"></div>
+              <div className="w-1 h-1 bg-electric-blue rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-1 h-1 bg-electric-blue rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            </div>
+          )}
         </div>
         
         <div className="flex items-center space-x-2">
@@ -71,7 +86,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={handleCopy}
-            className="h-8 w-8 p-0 hover:bg-accent/50"
+            className="h-8 w-8 p-0 hover:bg-accent/50 transition-all duration-200 hover:scale-110"
           >
             <Copy className="h-4 w-4" />
           </Button>
@@ -80,7 +95,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
               variant="ghost"
               size="sm"
               onClick={handleReset}
-              className="h-8 w-8 p-0 hover:bg-accent/50"
+              className="h-8 w-8 p-0 hover:bg-accent/50 transition-all duration-200 hover:scale-110"
             >
               <RotateCcw className="h-4 w-4" />
             </Button>
@@ -93,7 +108,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         {/* Line Numbers */}
         <div className="flex-shrink-0 select-none bg-muted/20 px-3 py-4 text-sm text-muted-foreground border-r border-border/50">
           {lineNumbers.map((num) => (
-            <div key={num} className="leading-6 text-right">
+            <div key={num} className="leading-6 text-right transition-colors duration-200 hover:text-electric-blue">
               {num}
             </div>
           ))}
@@ -104,20 +119,20 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           <textarea
             ref={textareaRef}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={handleChange}
             placeholder={placeholder}
             readOnly={readOnly}
-            className="w-full h-64 px-4 py-4 bg-transparent text-foreground font-mono text-sm leading-6 resize-none focus:outline-none custom-scrollbar"
+            className="w-full h-64 px-4 py-4 bg-transparent text-foreground font-mono text-sm leading-6 resize-none focus:outline-none custom-scrollbar transition-all duration-200"
             spellCheck="false"
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
           />
           
-          {/* Syntax highlighting overlay (for display purposes) */}
+          {/* Syntax highlighting overlay */}
           {value && (
             <div 
-              className="absolute inset-0 px-4 py-4 pointer-events-none text-sm leading-6 font-mono overflow-hidden"
+              className="absolute inset-0 px-4 py-4 pointer-events-none text-sm leading-6 font-mono overflow-hidden transition-opacity duration-300"
               dangerouslySetInnerHTML={{ __html: syntaxHighlight(value) }}
             />
           )}
