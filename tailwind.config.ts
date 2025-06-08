@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				'electric-blue': 'hsl(var(--electric-blue))',
+				'emerald-green': 'hsl(var(--emerald-green))',
+				'code-bg': 'hsl(var(--code-bg))',
+				'editor-bg': 'hsl(var(--editor-bg))',
+				'terminal-green': 'hsl(var(--terminal-green))',
+				'warning-amber': 'hsl(var(--warning-amber))',
+				'error-red': 'hsl(var(--error-red))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +92,51 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'scale-in': {
+					'0%': {
+						transform: 'scale(0.95)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					}
+				},
+				'slide-in-right': {
+					'0%': { transform: 'translateX(100%)' },
+					'100%': { transform: 'translateX(0)' }
+				},
+				'glow': {
+					'0%, 100%': { 
+						boxShadow: '0 0 20px hsla(210, 100%, 50%, 0.3)' 
+					},
+					'50%': { 
+						boxShadow: '0 0 30px hsla(210, 100%, 50%, 0.5)' 
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'scale-in': 'scale-in 0.2s ease-out',
+				'slide-in-right': 'slide-in-right 0.5s ease-out',
+				'glow': 'glow 2s ease-in-out infinite'
+			},
+			fontFamily: {
+				'mono': ['JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Monaco', 'monospace'],
+				'sans': ['Inter', 'system-ui', 'sans-serif']
 			}
 		}
 	},
